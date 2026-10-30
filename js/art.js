@@ -154,8 +154,12 @@ function drawMama(x, y, col, open, sq, blink) {
   const P = BLOB_COLS[col] || BLOB_COLS[0], pal = { k: P.k, g: P.g, w: P.w, d: P.d, E: OUT, m: '#5A1020', r: '#FF6A7A', p: '#FF9AB8' };
   const key = 'mama' + col + (open ? 1 : 0) + (blink ? 1 : 0); let c = SPR.get(key);
   if (!c) { let m = open ? MAMA_OPEN : MAMA; if (blink) m = m.map((r, i) => i === 5 || i === 6 ? r.replace(/[Ew]/g, 'g') : r); c = mapCanvas(m, pal); SPR.set(key, c); }
-  const w = c.width + Math.round(sq * 2), h = c.height - Math.round(sq * 2);
-  ctx.drawImage(c, Math.round(x - w / 2), Math.round(y - h), w, h);
+  /* suspaudimas be tempimo (tempiant pikseliai susilieja ir dingsta akių eilutės): išmetamos lygios kūno eilutės 12-13,
+     o vidurinis stulpelis praplatinamas - visi kiti pikseliai lieka savo dydžio */
+  const s = Math.min(2, Math.round(sq * 2)), W = c.width, H = c.height, m = W >> 1, w = W + s, h = H - s, x0 = Math.round(x - w / 2), y0 = Math.round(y - h);
+  if (!s) ctx.drawImage(c, x0, y0);
+  else for (let r = 0, dy = y0; r < H; r++) { if (r === 12 || (s > 1 && r === 13)) continue;
+    ctx.drawImage(c, 0, r, m, 1, x0, dy, m, 1); ctx.drawImage(c, m, r, 1, 1, x0 + m, dy, 1 + s, 1); ctx.drawImage(c, m + 1, r, W - m - 1, 1, x0 + m + 1 + s, dy, W - m - 1, 1); dy++; }
   /* kaspinas */
   drawMap(['ooo.ooo', 'obboobo', 'obbbbbo', 'obboobo', 'ooo.ooo'], Math.round(x - 1), Math.round(y - h - 3), { o: OUT, b: '#FF5A8A' });
 }

@@ -15,7 +15,7 @@ function drawWipe(dt) {
   if (WIPE.t >= D * 2) WIPE = null;
 }
 /* sprite'o padidinimas: fn piešia į 48×48 drobę, ji padidinama s kartų (pikseliai aštrūs) */
-const BIG = document.createElement('canvas'); BIG.width = 48; BIG.height = 48; const BIGX = BIG.getContext('2d');
+const BIG = document.createElement('canvas'); BIG.width = 48; BIG.height = 48; const BIGX = BIG.getContext('2d'); BIGX.imageSmoothingEnabled = false;   // be to mamos suspaudimas (ištempimas) būtų suliejamas
 function bigSprite(fn, x, y, s) {
   BIGX.clearRect(0, 0, 48, 48); const keep = ctx; ctx = BIGX; try { fn(); } finally { ctx = keep; }
   ctx.imageSmoothingEnabled = false; ctx.drawImage(BIG, 0, 0, 48, 48, Math.round(x), Math.round(y), 48 * s, 48 * s);
