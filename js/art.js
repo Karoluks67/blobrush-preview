@@ -187,17 +187,24 @@ function towerCanvas(w, dmg) {
   return TOWER_C[key] = c;
 }
 
-/* ---------- Vartai: du stulpeliai ir drebanti želė membrana; v - etiketė (×2, ×3, +5) ---------- */
+/* ---------- Vartai: du stulpeliai ir švytintis laukas su kylančiais šviesos taškais; ženklas (×2, +5, -1) - atskirai, virš gleivių ---------- */
 function drawGate(x, y, h, good, label, t, flash) {
-  const c1 = good ? '#5AE0FF' : '#FF6A6A', c2 = good ? '#BDF6FF' : '#FFC2C2';
-  ctx.globalAlpha = .38 + (flash > 0 ? flash : 0); ctx.fillStyle = c1; ctx.fillRect(x - 3, y, 7, h);
-  ctx.globalAlpha = .55; ctx.fillStyle = c2;
-  for (let yy = 0; yy < h; yy += 2) { const o = Math.round(Math.sin(t * 6 + yy * .35) * 1.4); ctx.fillRect(x + o, y + yy, 1, 1); }
+  const c1 = good ? '#5AE0FF' : '#FF6A6A', c2 = good ? '#E6FBFF' : '#FFE0E0';
+  ctx.globalAlpha = .28 + Math.min(.45, flash * 1.8); ctx.fillStyle = c1; ctx.fillRect(x - 3, y, 7, h);
+  ctx.globalAlpha = .4 + Math.min(.4, flash * 1.6); ctx.fillRect(x - 1, y, 3, h);
+  ctx.globalAlpha = .85; ctx.fillStyle = c2;
+  for (let i = 0; i < Math.ceil(h / 8); i++) { const yy = h - 1 - Math.floor((t * 26 + i * 8 + x * .7) % h); ctx.fillRect(x - 2 + (i * 2 + x) % 5, y + yy, 1, 2); }
   ctx.globalAlpha = 1;
-  for (const py of [y - 3, y + h - 3]) { ctx.fillStyle = OUT; ctx.fillRect(x - 3, py - 1, 7, 8); ctx.fillStyle = good ? '#2F9AD6' : '#C83A3A'; ctx.fillRect(x - 2, py, 5, 6); ctx.fillStyle = c2; ctx.fillRect(x - 2, py, 5, 1); ctx.fillRect(x - 2, py, 1, 3); }
-  const s = 1, tw = textW(label, s); ctx.fillStyle = OUT; ctx.fillRect(Math.round(x - tw / 2) - 3, Math.round(y + h / 2) - 6, tw + 6, 13);
-  ctx.fillStyle = good ? '#1E5A7A' : '#7A1E28'; ctx.fillRect(Math.round(x - tw / 2) - 2, Math.round(y + h / 2) - 5, tw + 4, 11);
-  text(label, x, y + h / 2 - 3, s, good ? '#E6FBFF' : '#FFE0E0', .5, null);
+  const lit = Math.floor(t * 3 + x) % 2;
+  for (const py of [y - 3, y + h - 3]) { ctx.fillStyle = OUT; ctx.fillRect(x - 3, py - 1, 7, 8); ctx.fillStyle = good ? '#2F9AD6' : '#C83A3A'; ctx.fillRect(x - 2, py, 5, 6); ctx.fillStyle = c2; ctx.fillRect(x - 2, py, 5, 1); ctx.fillRect(x - 2, py, 1, 3);
+    ctx.fillStyle = lit ? '#FFFFFF' : c1; ctx.fillRect(x, py + 2, 1, 2); }
+}
+function drawGateSign(x, y, h, good, label, bump, sc) {
+  sc = sc || 2; const tw = textW(label, sc), bw = tw + (sc > 1 ? 8 : 6), bh = sc > 1 ? 20 : 13, bx = Math.round(x - bw / 2), by = Math.round(y + h / 2) - (bh >> 1) - (bump > 0 ? (sc > 1 ? 2 : 1) : 0);
+  ctx.fillStyle = OUT; ctx.fillRect(bx - 1, by - 1, bw + 2, bh + 3);
+  ctx.fillStyle = bump > 0 ? (good ? '#2A80B6' : '#A8303C') : (good ? '#1E6A9A' : '#8A2430'); ctx.fillRect(bx, by, bw, bh);
+  ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(bx, by, bw, sc); ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(bx, by + bh - sc, bw, sc);
+  text(label, x, by + (sc > 1 ? 3 : 2), sc, '#FFFFFF', .5);
 }
 /* druskos luitas: baltai kristalinis, skaičius - kiek gleivių sugers */
 function drawSalt(x, y, w, h, hp, hp0, t) {
@@ -282,3 +289,32 @@ function drawBossArt(x, y, w, t, hit, mood) {
   const open = mood === 'roar'; R(-6, fy + 8, 13, open ? 6 : 4, OUT); R(-5, fy + 9, 11, open ? 4 : 2, '#5A1020'); for (let i = 0; i < 4; i++) R(-5 + i * 3, fy + 9, 2, 1, '#E8E0D0');
   if (hit > 0) { ctx.globalAlpha = .35; ctx.fillStyle = '#FFFFFF'; for (let yy = 0; yy < 28; yy++) { const hw = Math.round(Math.sqrt(Math.max(0, 1 - ((yy - 14) / 14) ** 2)) * 15); ctx.fillRect(x - hw, y - 31 + yy, hw * 2, 1); } ctx.globalAlpha = 1; }
 }
+
+/* ---------- Aplinkos gyvumas: drugeliai, vėjo brūkšniai, snaigės, pabarstukai, žarijos, mirksinčios žvaigždės ---------- */
+const AMB_BF = ['#FF9AB8', '#FFE36B', '#FFFFFF', '#B8A6FF', '#FFB46A'];
+function drawAmbient(w, t) {
+  const key = WORLD[w].key, H = (i, k) => hash(i, w, 50 + k);
+  if (key === 'meadow') for (let i = 0; i < 5; i++) {
+    const x = Math.round((H(i, 1) * 540 + t * (7 + H(i, 3) * 9)) % 540) - 30, y = Math.round(44 + H(i, 2) * 200 + Math.sin(t * 1.4 + i * 2) * 9), f = Math.floor(t * 9 + i) % 2;
+    ctx.fillStyle = AMB_BF[i]; if (f) { ctx.fillRect(x - 3, y - 2, 3, 2); ctx.fillRect(x + 1, y - 2, 3, 2); ctx.fillRect(x - 2, y, 2, 1); ctx.fillRect(x + 1, y, 2, 1); } else { ctx.fillRect(x - 1, y - 3, 1, 3); ctx.fillRect(x + 1, y - 3, 1, 3); }
+    ctx.fillStyle = OUT; ctx.fillRect(x, y - 2, 1, 3); }
+  else if (key === 'desert') for (let i = 0; i < 9; i++) {
+    const x = Math.round((H(i, 1) * 600 + t * (110 + H(i, 3) * 70)) % 600) - 60, y = Math.round(36 + H(i, 2) * 224), len = 6 + Math.round(H(i, 3) * 10);
+    ctx.fillStyle = 'rgba(255,244,214,.55)'; ctx.fillRect(x, y, len, 1); ctx.fillStyle = 'rgba(255,244,214,.3)'; ctx.fillRect(x + len, y, 4, 1); }
+  else if (key === 'snow' || key === 'candy') for (let i = 0; i < 34; i++) {
+    const x = Math.round((H(i, 1) * 500 + Math.sin(t * .9 + i) * 10 + t * 5) % 500) - 10, y = Math.round((H(i, 2) * 290 + t * (12 + H(i, 3) * 14)) % 290) - 6;
+    if (key === 'snow') { ctx.fillStyle = H(i, 4) < .3 ? '#C6DAEC' : '#FFFFFF'; const s = H(i, 3) > .7 ? 2 : 1; ctx.fillRect(x, y, s, s); }
+    else { ctx.fillStyle = CANDY_SP[i % 4]; if (Math.floor(t * 4 + i) % 2) ctx.fillRect(x, y, 2, 1); else ctx.fillRect(x, y, 1, 2); } }
+  else if (key === 'volcano') for (let i = 0; i < 22; i++) {
+    const x = Math.round(H(i, 1) * 480 + Math.sin(t * 2 + i) * 5), y = Math.round(272 - (H(i, 2) * 300 + t * (18 + H(i, 3) * 26)) % 300), fl = Math.floor(t * 8 + i) % 3;
+    ctx.fillStyle = fl === 0 ? '#FFE36B' : fl === 1 ? '#FFB43A' : '#FF6A2A'; ctx.fillRect(x, y, 1, 1); if (H(i, 4) > .75) ctx.fillRect(x, y + 1, 1, 1); }
+  else if (key === 'space') {
+    for (let i = 0; i < 18; i++) { const x = Math.round(H(i, 1) * 470 + 5), y = Math.round(34 + H(i, 2) * 228), b = Math.sin(t * 2.2 + i * 2.7);
+      if (b > .75) { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x - 1, y, 3, 1); ctx.fillRect(x, y - 1, 1, 3); } else if (b > 0) { ctx.fillStyle = '#B8B8E8'; ctx.fillRect(x, y, 1, 1); } }
+    const p = (t % 7) / 1.1; if (p < 1) { const x = Math.round(80 + p * 300), y = Math.round(40 + p * 60); for (let j = 0; j < 10; j++) { ctx.globalAlpha = 1 - j / 10; ctx.fillStyle = j < 2 ? '#FFFFFF' : '#BDF6FF'; ctx.fillRect(x - j * 3, y - j, 3, 1); } ctx.globalAlpha = 1; }
+  }
+}
+const CANDY_SP = ['#FF8AC0', '#7AE0FF', '#FFE04A', '#FFFFFF'];
+/* baltas sprite'o siluetas (smūgio blyksniui) */
+const WHITE_C = new Map();
+function whiteOf(c) { let w = WHITE_C.get(c); if (w) return w; w = document.createElement('canvas'); w.width = c.width; w.height = c.height; const g = w.getContext('2d'); g.drawImage(c, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, w.width, w.height); WHITE_C.set(c, w); return w; }

@@ -62,9 +62,9 @@ function drawTitle(dt) {
   acc += dt; while (acc >= DT) { step(DT, botInput('smart')); acc -= DT; }
   state = st; save.sfx = keepS; setVol();
   drawPlay(dt);
-  ctx.fillStyle = 'rgba(14,11,26,.5)'; ctx.fillRect(0, 0, GW, GH);
+  ctx.fillStyle = 'rgba(14,11,26,.58)'; ctx.fillRect(0, 0, GW, GH);
   drawLogo(240, 22, 6, gt);
-  btn(170, 104, 140, 32, T('play'), COL.btn, startGame, 3, 0);
+  const pb = Math.sin(gt * 4) > .35 ? -1 : 0; btn(170, 104 + pb, 140, 32, T('play'), COL.btn, startGame, 3, 0); shine(170, 104 + pb, 140, 32, gt);
   btn(170, 144, 68, 24, T('levels'), COL.panel2, () => wipe(() => { state = 'map'; toMapNow(); }), 1, 1);
   btn(242, 144, 68, 24, T('shop'), '#8A5A10', () => openShop('title'), 1, 2);
   if (save.unlocked > 1) { const n = Object.values(save.stars).reduce((a, b) => a + b, 0); starIcon(210, 180); text(n + ' / 180', 220, 180, 1, COL.acc, 0); }

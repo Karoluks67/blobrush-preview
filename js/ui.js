@@ -41,6 +41,7 @@ function bakeLevel() {
 }
 function drawPlay(dt) {
   const W = WORLD[L.w]; if (!L.cache) bakeLevel();
+  ctx.fillStyle = W.gD; ctx.fillRect(0, 0, GW, GH);
   ctx.save(); if (shake > 0) ctx.translate(Math.round(rnd(-2, 2) * shake * 4), Math.round(rnd(-2, 2) * shake * 4));
   ctx.drawImage(L.cache, 0, 0);
   for (const z of L.ices) drawIce(z.x, z.y, z.w, z.h, gt);
@@ -49,22 +50,32 @@ function drawPlay(dt) {
   for (const p of L.portals) { drawPortal(p.x, p.y, gt, '#B07AFF'); drawPortal(p.x2, p.y2, -gt, '#7AF0FF'); }
   for (const s of L.salts) if (s.hp > 0) drawSalt(s.x + (s.fl > 0 ? 1 : 0), s.y, s.w, s.h, s.hp, s.hp0, gt);
   for (const g of L.gates) drawGate(g.x, Math.round(gateY(g)), g.h, gateGood(g), gateLabel(g), gt, Math.max(0, g.fl));
+  /* taikiklis: bėgantys taškeliai iš mamos burnos - matyti, kur skris gleivės */
+  if (!L.win && !L.lose) { const my = Math.round(L.mama.y) - 6; for (let i = 0; i < 8; i++) { const d = (i * 9 + gt * 46) % 72; ctx.globalAlpha = .7 * (1 - d / 72); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(PX + 16 + Math.round(d), my, 2, 1); } ctx.globalAlpha = 1; }
   for (const u of L.bubbles) if (!u.done) drawBubble(u.x, Math.round(u.y + Math.sin(gt * 2 + u.x) * 1.5), u.n, gt, save.color);
   /* tvirtovė (dreba nuo smūgių) */
-  const T = L.tower, tc = towerCanvas(L.w, 1 - T.hp / T.hp0), jx = T.hit > 0 ? (Math.floor(gt * 50) % 2 ? 1 : -1) : 0;
-  if (!(L.win > .25)) ctx.drawImage(tc, TX - 2 + jx, TY0 - 14);
+  const T = L.tower, tc = towerCanvas(L.w, 1 - T.hp / T.hp0), low = T.hp / T.hp0 < .25 && Math.floor(gt * 14) % 5 === 0, jx = T.hit > 0 ? (Math.floor(gt * 50) % 2 ? 1 : -1) : low ? (Math.floor(gt * 31) % 2 ? 1 : -1) : 0;
+  if (!(L.win > .25)) { const sw = 40 + Math.round(T.sq * 4), sh = 108 - Math.round(T.sq * 5), tx = TX - 2 - Math.round((sw - 40) / 2) + jx, ty = TY0 - 14 + 108 - sh;
+    ctx.drawImage(tc, tx, ty, sw, sh); if (T.fl > 0) { ctx.globalAlpha = .55; ctx.drawImage(whiteOf(tc), tx, ty, sw, sh); ctx.globalAlpha = 1; } }
   else { const k = Math.min(1, (L.win - .25) * 1.6); ctx.drawImage(tc, 0, 0, 40, 108 * (1 - k), TX - 2 + rnd(-1, 1), TY0 - 14 + 108 * k, 40, 108 * (1 - k)); }
   /* gleivės ir akmenukai pagal gylį */
   const list = [];
   for (const b of L.blobs) list.push(b); for (const r of L.rocks) list.push(r);
   list.sort((a, b) => a.y - b.y);
   const col = save.color, hat = save.hat;
+  /* šešėliai po gleivėmis ir akmenukais (atskiras praėjimas, kad nekristų ant kaimynų) */
+  ctx.fillStyle = 'rgba(0,0,0,.17)';
+  for (const o of list) { const sw = o.sz ? o.r * 2 : o.hp >= 10 ? 14 : o.hp >= 5 ? 10 : o.hp >= 2 ? 7 : 5; ctx.fillRect(Math.round(o.x - sw / 2), Math.round(o.y) - 1, sw, 2); }
   for (const o of list) {
     if (o.sz) { const f = Math.floor(gt * 5 + o.ph) % 2; drawRock(o.x, o.y, o.sz, f, L.w); if (o.hit > 0) { const c = rockSprite(o.sz, 0, L.w); ctx.globalAlpha = .5; ctx.fillStyle = '#FFFFFF'; ctx.fillRect(Math.round(o.x - c.width / 2) + 1, Math.round(o.y - c.height) + 1, c.width - 2, c.height - 2); ctx.globalAlpha = 1; } }
-    else { const ph = gt * 9 + o.ph, f = Math.sin(ph) < -.6 ? 1 : 0; drawBlob(o.x, o.y, o.hp, f, col, hat, f ? 0 : Math.round(Math.max(0, Math.sin(ph)) * (o.hp >= 10 ? 1 : 2))); }
+    else { const ph = gt * (L.win ? 14 : 9) + o.ph, f = Math.sin(ph) < -.6 ? 1 : 0, age = L.t - (o.bt || 0), amp = L.win ? 4 : o.hp >= 10 ? 1 : 2;
+      if (age < .08) drawBlob(o.x, o.y, o.hp >= 10 ? 5 : 1, 1, col, hat, 2);   /* ką tik gimusi - iššoka */
+      else drawBlob(o.x, o.y, o.hp, f, col, hat, f ? 0 : Math.round(Math.max(0, Math.sin(ph)) * amp)); }
   }
   if (L.boss && L.boss.hp > 0) drawBoss(L.boss, W);
-  drawMama(PX, Math.round(L.mama.y), save.color, L.mama.open > 0, L.mama.sq, (gt % 3.4) < .12);
+  for (const g of L.gates) drawGateSign(g.x, Math.round(gateY(g)), g.h, gateGood(g), gateLabel(g), g.bump || 0, g.sc);
+  drawMama(PX - Math.round((L.mama.kick || 0) * 2), Math.round(L.mama.y), save.color, L.mama.open > 0, L.mama.sq, (gt % 3.4) < .12);
+  drawAmbient(L.w, gt);
   drawParticles(fx);
   ctx.restore();
   if (flash > 0) { ctx.fillStyle = `rgba(255,255,255,${(flash * 1.5).toFixed(2)})`; ctx.fillRect(0, 0, GW, GH); }
@@ -76,27 +87,32 @@ function drawBoss(B, W) {
   const x = Math.round(B.x), y = Math.round(B.y), k = B.hp / B.hp0; ctx.fillStyle = OUT; ctx.fillRect(x - 17, y - 41, 34, 5); ctx.fillStyle = '#3A2A3A'; ctx.fillRect(x - 16, y - 40, 32, 3); ctx.fillStyle = '#FF5A6A'; ctx.fillRect(x - 16, y - 40, Math.round(32 * k), 3);
 }
 /* ---------- HUD ---------- */
-const BIGB = [GW - 42, GH - 40, 34, 32];   /* dešinėje apačioje - kairėje juda mama */
+const BIGB = [GW - 42, GH - 40, 34, 32];
+let hudN = 0, hudB = 0;   /* dešinėje apačioje - kairėje juda mama */
 function drawHud() {
   /* viršutinė juosta */
   ctx.fillStyle = 'rgba(14,12,26,.82)'; ctx.fillRect(0, 0, GW, 22); ctx.fillStyle = OUT; ctx.fillRect(0, 22, GW, 1);
   text(T('level') + ' ' + lvName(LV), 8, 6, 1, COL.txt, 0);
-  for (let i = 0; i < 3; i++) heartIcon(104 + i * 10, 7, i < L.hearts);
+  for (let i = 0; i < 3; i++) { const lost = i === L.hearts && L.heartFx > 0, jx = lost ? Math.round(Math.sin(gt * 70) * 2 * L.heartFx) : 0; heartIcon(104 + i * 10 + jx, 7 - (lost ? Math.round(L.heartFx * 3) : 0), i < L.hearts || (lost && L.heartFx > .5)); }
   /* tvirtovės juosta */
   const T0 = L.tower, k = T0.hp / T0.hp0, bx = 150, bw = 180;
   ctx.fillStyle = OUT; ctx.fillRect(bx - 1, 5, bw + 2, 12); ctx.fillStyle = '#3A2A3A'; ctx.fillRect(bx, 6, bw, 10);
-  ctx.fillStyle = '#FF5A6A'; ctx.fillRect(bx, 6, Math.round(bw * k), 10); ctx.fillStyle = '#FF9AA6'; ctx.fillRect(bx, 6, Math.round(bw * k), 2);
+  ctx.fillStyle = '#FFF0E0'; ctx.fillRect(bx, 6, Math.round(bw * T0.ghost / T0.hp0), 10);
+  ctx.fillStyle = T0.fl > 0 ? '#FFC2CC' : '#FF5A6A'; ctx.fillRect(bx, 6, Math.round(bw * k), 10); ctx.fillStyle = '#FF9AA6'; ctx.fillRect(bx, 6, Math.round(bw * k), 2);
   text(T0.hp, bx + bw / 2, 7, 1, '#FFFFFF', .5);
   drawMap(['k.k.k', 'kkkkk', 'krkrk', 'kkkkk', 'kk.kk'], bx - 9, 7, { k: OUT, r: '#FFD24A' });
-  coinIcon(352, 8); text(save.coins, 360, 7, 1, COL.coin, 0);
+  /* gleivių skaičius (žaidime monetos nesikeičia - rodoma minia) */
+  const n = L.blobs.length; if (n > hudN) hudB = .12; hudN = n; hudB = Math.max(0, hudB - 1 / 60);
+  ctx.drawImage(blobSprite('M', 0, save.color, 0), 342, 5 - (hudB > 0 ? 1 : 0)); text(n, 354, 7 - (hudB > 0 ? 1 : 0), 1, hudB > 0 ? '#FFFFFF' : COL.good, 0);
   btn(GW - 24, 2, 20, 18, 'II', COL.panel2, pauseGame, 1);
   /* didžiosios gleivės mygtukas su įkrovos juosta */
-  const [x, y, w, h] = BIGB, ready = L.meter >= L.need, p = L.meter / L.need;
+  const [x, y0b, w, h] = BIGB, ready = L.meter >= L.need, p = L.meter / L.need, y = ready ? y0b - Math.round(Math.abs(Math.sin(gt * 5)) * 3) : y0b;
+  if (ready && Math.random() < .15) fx.push({ k: 'star', x: x + Math.random() * w, y: y + Math.random() * h, vx: 0, vy: -20, t: .25, max: .25 });
   panel(x, y, w, h, ready ? (Math.floor(gt * 4) % 2 ? '#3E8A2E' : '#4FA83A') : COL.panel);
   const fh = Math.round((h - 2) * p); ctx.fillStyle = ready ? 'rgba(255,255,255,.1)' : 'rgba(123,227,74,.35)'; ctx.fillRect(x + 1, y + h - 1 - fh, w - 2, fh);
   const c = blobSprite('L', ready ? Math.floor(gt * 6) % 2 : 0, save.color, save.hat); ctx.globalAlpha = ready ? 1 : .55; ctx.drawImage(c, x + Math.round((w - c.width) / 2), y + 4 + (c.height < 14 ? 2 : 0)); ctx.globalAlpha = 1;
   if (!touchUI) text('E', x + w - 6, y + h - 9, 1, COL.dim, .5);
-  if (ready) button(x, y, w, h, () => { inpBig = true; });
+  if (ready) button(x, y0b - 3, w, h + 3, () => { inpBig = true; });
   /* mokymo užrašai */
   const D = L.D;
   if (L.t < 6 && LV === 0) tip(T('tAim'), 70);
@@ -134,7 +150,7 @@ function finishLevel() {
     const c = 20 + LV * 4 + st * 5 + (prev ? 0 : 15); res = { win, coins: c, stars: st, first: !prev, t: 0, shown: 0, dbl: false }; }
   else res = { win, coins: Math.max(5, L.popped), stars: 0, t: 0, shown: 0, dbl: false };
   save.coins += res.coins; save.pops = (save.pops || 0) + L.popped; persist();
-  state = 'result'; stT = 0; Poki.stop();
+  state = 'result'; stT = 0; resFx = []; Poki.stop();
 }
 function drawResult(dt) {
   drawPlay(0); res.t += dt; ctx.fillStyle = 'rgba(10,8,20,.62)'; ctx.fillRect(0, 0, GW, GH);
@@ -142,19 +158,32 @@ function drawResult(dt) {
   panel(120, y0, 240, 196, COL.panel, COL.edge); ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(121, y0 + 1, 238, 2);
   if (res.win) {
     text(T('win'), 240, y0 + 12, fitSc(T('win'), 220, 3), COL.acc, .5);
-    for (let i = 0; i < 3; i++) { const on = i < res.stars && res.t > .4 + i * .25; starIcon(203 + i * 26, y0 + 46 + (i === 1 ? -4 : 0), on, true); if (on && res.t - dt <= .4 + i * .25) sfx('star'); }
-    bigSprite(() => { drawMama(20, 24, save.color, Math.floor(gt * 3) % 2, Math.max(0, Math.sin(gt * 8)) * .6, false); }, 132, y0 + 58, 2);
+    if (!res.conf) { res.conf = 1; for (let i = 0; i < 80; i++) resFx.push({ k: 'conf', x: rnd(120, 360), y: rnd(-30, 10), vx: rnd(-40, 40), vy: rnd(0, 60), t: rnd(1.6, 2.8), max: 2.8, c: pick(CONF_C), ph: rnd(0, 6), g: .3 }); }
+    for (let i = 0; i < 3; i++) { const t0 = .4 + i * .25, on = i < res.stars && res.t > t0, e = res.t - t0, s = on && e < .09 ? 3 : 2, cx = 210 + i * 30, cy = y0 + 50 + (i === 1 ? -5 : 0);
+      bigSprite(() => starIcon(19, 19, on, true), cx - 23.5 * s, cy - 24 * s, s);
+      if (on && res.t - dt <= t0) { sfx('star', 1 + i * .12); for (let j = 0; j < 12; j++) { const a = j / 12 * TAU; resFx.push({ k: 'star', x: cx, y: cy, vx: Math.cos(a) * 70, vy: Math.sin(a) * 70, t: .35, max: .35 }); } } }
+    bigSprite(() => { drawMama(20, 24 - Math.round(Math.abs(Math.sin(gt * 6)) * 3), save.color, Math.floor(gt * 3) % 2, Math.max(0, Math.sin(gt * 8)) * .6, false); }, 132, y0 + 58, 2);
   } else {
     text(T('lose'), 240, y0 + 12, fitSc(T('lose'), 220, 3), COL.red, .5);
     const tip2 = T('tips')[LV % T('tips').length]; text(tip2, 240, y0 + 52, fitSc(tip2, 220, 1), COL.dim, .5);
   }
   /* monetos skaičiuojamos */
-  const target = res.coins * (res.dbl ? 2 : 1); if (res.shown < target && res.t > .6) { res.shown = Math.min(target, res.shown + Math.max(1, Math.ceil(target * dt * 1.6))); if (Math.floor(res.t * 20) % 2) sfx('coin'); }
+  const target = res.coins * (res.dbl ? 2 : 1); if (res.shown < target && res.t > .6) { res.shown = Math.min(target, res.shown + Math.max(1, Math.ceil(target * dt * 1.6))); if (Math.floor(res.t * 20) % 2) sfx('coin', 1 + res.shown / target * .6); }
   coinIcon(214, y0 + 82); text('+' + res.shown, 224, y0 + 81, 2, COL.coin, 0);
   if (!res.dbl) { btn(296, y0 + 76, 58, 20, T('x2'), '#8A5A10', doubleCoins, 1, 9); adIcon(300, y0 + 82); }
   if (res.win) { btn(180, y0 + 108, 120, 28, LV + 1 < LEVELS.length ? T('next') : T('map'), COL.btn, nextLevel, 2, 0); btn(180, y0 + 142, 58, 20, T('retry'), COL.panel2, retryLevel, 1, 1); btn(242, y0 + 142, 58, 20, T('map'), COL.panel2, () => toMap(), 1, 2); }
   else { btn(180, y0 + 108, 120, 28, T('retry'), COL.btn, retryLevel, 2, 0); btn(180, y0 + 142, 58, 20, T('shop'), '#8A5A10', () => openShop('result'), 1, 1); btn(242, y0 + 142, 58, 20, T('map'), COL.panel2, () => toMap(), 1, 2); }
   coinIcon(186, y0 + 172); text(save.coins, 196, y0 + 171, 1, COL.coin, 0);
+  if (res.win) shine(180, y0 + 108, 120, 28, gt);
+  stepParticles(resFx, dt); drawParticles(resFx);
+}
+let resFx = [];
+/* blizgesio juosta per mygtuką (kviečia spausti) */
+function shine(x, y, w, h, t) {
+  const p = (t % 2.4) / .55; if (p > 1) return; const sx = Math.round(x - 12 + p * (w + 24));
+  ctx.save(); ctx.beginPath(); ctx.rect(x + 1, y + 1, w - 2, h - 2); ctx.clip(); ctx.fillStyle = 'rgba(255,255,255,.3)';
+  for (let i = 0; i < h; i++) ctx.fillRect(sx - (i >> 1), y + i, 5, 1); ctx.fillStyle = 'rgba(255,255,255,.18)'; for (let i = 0; i < h; i++) ctx.fillRect(sx + 7 - (i >> 1), y + i, 2, 1);
+  ctx.restore();
 }
 function doubleCoins() { if (res.dbl) return; Poki.rewarded().then(ok => { if (ok && !res.dbl) { res.dbl = true; save.coins += res.coins; persist(); sfx('buy'); } }); }
 function nextLevel() {
@@ -255,7 +284,8 @@ function frame(now) {
   else if (state === 'shop') drawShop(dt);
   else if (state === 'settings') { drawSettingsBehind(dt); drawSettings(dt); }
   else if (state === 'play' || state === 'pause') {
-    if (state === 'play') { const inp = playInput(dt); acc += dt; while (acc >= DT) { step(DT, inp); inp.big = false; acc -= DT; }
+    if (state === 'play') { const inp = playInput(dt), ts = hitStop > 0 ? 0 : slow > 0 ? .35 : 1; hitStop = Math.max(0, hitStop - dt); if (!hitStop) slow = Math.max(0, slow - dt);
+      acc += dt * ts; while (acc >= DT) { step(DT, inp); inp.big = false; acc -= DT; }
       if ((L.win > 1.6 || L.lose > 1.2) && state === 'play') finishLevel(); }
     drawPlay(dt); drawHud(); if (state === 'pause') drawPause();
   }

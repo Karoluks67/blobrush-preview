@@ -130,11 +130,12 @@ function tone(f, dur, vol, type, f2, delay) {
   o.connect(g); g.connect(sfxBus); o.start(t); o.stop(t + dur);
 }
 const SFX_T = {};
-function sfx(k) {
+function sfx(k, p) {
+  p = p || 1;
   const now = performance.now(); if (SFX_T[k] && now - SFX_T[k] < (k === 'pop' || k === 'split' ? 55 : 40)) return; SFX_T[k] = now;
   switch (k) {
     case 'shoot': tone(rnd(520, 640), .05, .035, 'triangle', 260); break;
-    case 'split': tone(rnd(700, 820), .06, .045, 'sine', 1300); break;
+    case 'split': tone(rnd(700, 760) * p, .06, .045, 'sine', 1300 * p); break;
     case 'pop': noise(.05, 2200, 700, .06, 'bandpass'); tone(rnd(380, 460), .04, .03, 'sine', 180); break;
     case 'hit': noise(.06, 900, 300, .1); break;
     case 'crack': noise(.12, 1500, 200, .16); tone(140, .08, .06, 'square', 80); break;
@@ -147,7 +148,7 @@ function sfx(k) {
     case 'warp': tone(900, .15, .05, 'triangle', 200); break;
     case 'win': [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, .14, .08, 'square', null, i * .08)); break;
     case 'lose': [392, 330, 262, 196].forEach((f, i) => tone(f, .18, .07, 'triangle', null, i * .12)); break;
-    case 'coin': tone(988, .05, .05, 'square'); tone(1318, .09, .05, 'square', null, .05); break;
+    case 'coin': tone(988 * p, .05, .05, 'square'); tone(1318 * p, .09, .05, 'square', null, .05); break;
     case 'buy': [659, 880, 1175].forEach((f, i) => tone(f, .08, .07, 'square', null, i * .05)); break;
     case 'click': tone(660, .04, .06, 'square'); break;
     case 'nope': tone(220, .08, .06, 'square'); tone(160, .12, .06, 'square', null, .08); break;
