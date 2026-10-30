@@ -1,4 +1,4 @@
-/* core: drobė (480×272 žaidimo pikselių, sveikas mastelis), įvestis (pelė, lietimas, klaviatūra, pultelis), pikselinis šriftas, garsas, išsaugojimas, Poki SDK */
+/* core: drobė (480×272 žaidimo pikselių, sveikas mastelis), įvestis (pelė, lietimas, klaviatūra, pultelis), pikselinis šriftas, garsas, išsaugojimas, platformų SDK (Poki / CrazyGames) */
 'use strict';
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -113,7 +113,7 @@ function audioInit() {
   if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
   try { AC = new (window.AudioContext || window.webkitAudioContext)(); master = AC.createGain(); master.connect(AC.destination); sfxBus = AC.createGain(); sfxBus.connect(master); setVol(); } catch (_) { AC = null; }
 }
-function setVol() { if (!master) return; master.gain.value = adMute ? 0 : .5; sfxBus.gain.value = save && save.sfx === false ? 0 : 1; }
+function setVol() { if (!master) return; master.gain.value = adMute || Plat.muted ? 0 : .5; sfxBus.gain.value = save && save.sfx === false ? 0 : 1; }
 let noiseBuf = null;
 function noise(dur, f0, f1, vol, type, delay) {
   if (!AC) return; const t = AC.currentTime + (delay || 0);
@@ -163,33 +163,54 @@ function sfx(k, p) {
 /* ---------- Išsaugojimas: localStorage su try/catch (inkognito - žaidžiama be įrašo) ---------- */
 const SAVE_KEY = /[?&](shots|solver|test)/.test(location.search) ? 'blobrush_test' : 'blobrush_v1';   // įrankių kortelės neliečia žaidėjo įrašo
 let save = null;
-function loadSave() {
-  let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) { }
+function loadSave(raw) {
+  let s = null; try { s = JSON.parse(raw || localStorage.getItem(SAVE_KEY) || 'null'); } catch (_) { }
   save = Object.assign({ v: 1, stars: {}, unlocked: 1, sfx: true, lang: null, coins: 0, up: { rate: 0, big: 0, power: 0 }, hats: [0], hat: 0, color: 0, pops: 0 }, s || {});
   save.up = Object.assign({ rate: 0, big: 0, power: 0 }, save.up);
 }
-function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (_) { } }
+function persist() { const j = JSON.stringify(save); try { localStorage.setItem(SAVE_KEY, j); } catch (_) { } Plat.dataSet(j); }
+/* po SDK paleidimo: CrazyGames paskyros įrašas pirmesnis už vietinį; jei paskyroje nieko nėra - perkeliamas vietinis */
+function syncSave() { if (Plat.kind !== 'crazy') return; const r = Plat.dataGet(); if (r) loadSave(r); else persist(); }
 
-/* ---------- Poki SDK: tikras Poki puslapyje; kitaip - vietinis pakaitalas (bandymams, „reklama" 1 s) ---------- */
-const Poki = {
-  sdk: null, playing: false, adShow: 0,
-  init() {
-    this.sdk = window.PokiSDK || null;
-    if (!this.sdk) { console.log('[poki] SDK nėra - vietinis režimas'); return Promise.resolve(); }
-    return this.sdk.init().catch(() => { });   // reklamų blokatorius - žaidžiama toliau
+/* ---------- Platforma: Poki, CrazyGames (SDK v3) arba be SDK (vietinis pakaitalas bandymams, „reklama" 1 s).
+   Kuris SDK įkeltas, nusprendžia index.html (tools/preview.py --crazy pakeičia Poki skriptą CrazyGames skriptu) ---------- */
+const Plat = {
+  kind: 'none', sdk: null, playing: false, adShow: 0, canReward: true, muted: false, msg: 0,
+  async init() {
+    try {
+      const CG = window.CrazyGames && window.CrazyGames.SDK;
+      if (CG) { await CG.init(); if (CG.environment === 'disabled') throw new Error('CrazyGames SDK disabled');
+        this.kind = 'crazy'; this.sdk = CG; const g = CG.game; g.loadingStart();
+        this.muted = !!(g.settings && g.settings.muteAudio); g.addSettingsChangeListener(st => { this.muted = !!(st && st.muteAudio); setVol(); });
+        try { if (await CG.ad.hasAdblock()) this.canReward = false; } catch (_) { }
+        return; }
+      if (window.PokiSDK) { this.kind = 'poki'; this.sdk = window.PokiSDK; await this.sdk.init().catch(() => { this.canReward = false; }); return; }
+    } catch (e) { console.log('[plat]', e && e.message || e); }
+    this.kind = 'none'; this.sdk = null; console.log('[plat] SDK nėra - vietinis režimas');
   },
-  loaded() { this.sdk && this.sdk.gameLoadingFinished(); },
-  start() { if (this.playing) return; this.playing = true; this.sdk ? this.sdk.gameplayStart() : console.log('[poki] gameplayStart'); },
-  stop() { if (!this.playing) return; this.playing = false; this.sdk ? this.sdk.gameplayStop() : console.log('[poki] gameplayStop'); },
+  loaded() { try { if (this.kind === 'poki') this.sdk.gameLoadingFinished(); else if (this.kind === 'crazy') this.sdk.game.loadingStop(); } catch (_) { } },
+  start() { if (this.playing) return; this.playing = true; try { if (this.kind === 'poki') this.sdk.gameplayStart(); else if (this.kind === 'crazy') this.sdk.game.gameplayStart(); else console.log('[plat] gameplayStart'); } catch (_) { } },
+  stop() { if (!this.playing) return; this.playing = false; try { if (this.kind === 'poki') this.sdk.gameplayStop(); else if (this.kind === 'crazy') this.sdk.game.gameplayStop(); else console.log('[plat] gameplayStop'); } catch (_) { } },
+  happy() { try { if (this.kind === 'crazy') this.sdk.game.happytime(); } catch (_) { } },
+  locale() { try { return this.kind === 'crazy' ? this.sdk.user.systemInfo.locale : null; } catch (_) { return null; } },
+  /* garsas tildomas tik reklamai prasidėjus (CrazyGames taisyklė) ir grąžinamas jai baigusis ar nepavykus */
+  adOn() { adMute = true; setVol(); }, adOff() { adMute = false; setVol(); },
   commercial() {
     this.stop();
-    if (!this.sdk) { console.log('[poki] commercialBreak'); return this.fake(.6); }
-    return this.sdk.commercialBreak(() => { adMute = true; setVol(); }).then(() => { adMute = false; setVol(); });
+    if (this.kind === 'poki') return this.sdk.commercialBreak(() => this.adOn()).then(() => this.adOff(), () => this.adOff());
+    if (this.kind === 'crazy') return new Promise(ok => { try { this.sdk.ad.requestAd('midgame', { adStarted: () => this.adOn(), adFinished: () => { this.adOff(); ok(); }, adError: () => { this.adOff(); ok(); } }); } catch (_) { this.adOff(); ok(); } });
+    console.log('[plat] midgame'); return this.fake(.6);
   },
+  /* true - reklama peržiūrėta, duodamas atlygis; false - atlygio nėra (rodoma „reklamos dabar nėra") */
   rewarded() {
     this.stop();
-    if (!this.sdk) { console.log('[poki] rewardedBreak'); return this.fake(1.2).then(() => true); }
-    return this.sdk.rewardedBreak({ size: 'small', onStart: () => { adMute = true; setVol(); } }).then(ok => { adMute = false; setVol(); return !!ok; });
+    const fail = code => { if (code === 'adsDisabled' || code === 'adblock') this.canReward = false; else this.msg = 2.5; return false; };
+    if (this.kind === 'poki') return this.sdk.rewardedBreak({ size: 'small', onStart: () => this.adOn() }).then(ok => { this.adOff(); return ok ? true : fail(''); }, () => { this.adOff(); return fail(''); });
+    if (this.kind === 'crazy') return new Promise(ok => { try { this.sdk.ad.requestAd('rewarded', { adStarted: () => this.adOn(), adFinished: () => { this.adOff(); ok(true); }, adError: e => { this.adOff(); ok(fail(e && e.code)); } }); } catch (_) { this.adOff(); ok(fail('other')); } });
+    console.log('[plat] rewarded'); return this.fake(1.2).then(() => true);
   },
-  fake(t) { adMute = true; setVol(); this.adShow = t; return new Promise(ok => setTimeout(() => { adMute = false; setVol(); this.adShow = 0; ok(); }, t * 1000)); }
+  fake(t) { this.adOn(); this.adShow = t; return new Promise(ok => setTimeout(() => { this.adOff(); this.adShow = 0; ok(); }, t * 1000)); },
+  /* CrazyGames Data modulis: prisijungusio žaidėjo progresas sinchronizuojamas tarp įrenginių */
+  dataGet() { try { return this.kind === 'crazy' ? this.sdk.data.getItem(SAVE_KEY) : null; } catch (_) { return null; } },
+  dataSet(v) { try { if (this.kind === 'crazy') this.sdk.data.setItem(SAVE_KEY, v); } catch (_) { } },
 };

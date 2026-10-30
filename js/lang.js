@@ -6,7 +6,7 @@ const LANGS = {
     wn: ['GREEN MEADOW', 'SUNNY DESERT', 'SNOWY HILLS', 'CANDY LAND', 'VOLCANO', 'OUTER SPACE'],
     win: 'VICTORY!', lose: 'OH NO!', next: 'NEXT', retry: 'RETRY', upgrades: 'UPGRADES', hats: 'HATS', colors: 'COLORS',
     up_rate: 'FIRE RATE', up_big: 'BIG BLOB', up_power: 'DOUBLE BLOB', upd_rate: 'MORE BLOBS PER SECOND', upd_big: 'CHARGES FASTER', upd_power: 'CHANCE OF A DOUBLE BLOB',
-    max: 'MAX', wear: 'WEAR', worn: 'ON', free: 'FREE +60', x2: '×2', boss: 'BOSS!', worldClear: 'WORLD CLEAR!', theEnd: 'YOU WIN! THE END', rotate: 'ROTATE YOUR PHONE', hintKb: 'MOUSE OR W/S TO AIM · E = BIG BLOB',
+    max: 'MAX', wear: 'WEAR', worn: 'ON', noAd: 'NO AD RIGHT NOW - TRY LATER', free: 'FREE +60', x2: '×2', boss: 'BOSS!', worldClear: 'WORLD CLEAR!', theEnd: 'YOU WIN! THE END', rotate: 'ROTATE YOUR PHONE', hintKb: 'MOUSE OR W/S TO AIM · E = BIG BLOB',
     tAim: 'MOVE TO AIM - ×2 GATES SPLIT BLOBS!', tRed: 'AVOID RED GATES!', tBubble: 'POP BUBBLES FOR MORE BLOBS', tBig: 'BIG BLOB READY! TAP IT (E)',
     feat: ['', 'SALT EATS BLOBS - BREAK THROUGH!', 'ICE MAKES BLOBS FAST', 'JELLY BOUNCES BLOBS', 'STEAM PUSHES BLOBS', 'PORTALS TELEPORT BLOBS'],
     tips: ['TIP: AIM AT ×3 GATES', 'TIP: UPGRADES IN THE SHOP', 'TIP: BIG BLOB CRUSHES ROCKS', 'TIP: STOP ROCKS NEAR MAMA'] },
@@ -14,7 +14,7 @@ const LANGS = {
     wn: ['ŽALIOJI PIEVA', 'SAULĖTA DYKUMA', 'SNIEGO KALVOS', 'SALDAINIŲ ŠALIS', 'UGNIKALNIS', 'KOSMOSAS'],
     win: 'PERGALĖ!', lose: 'O NE!', next: 'TOLIAU', retry: 'DAR KARTĄ', upgrades: 'PATOBULINIMAI', hats: 'KEPURĖS', colors: 'SPALVOS',
     up_rate: 'ŠAUDYMO GREITIS', up_big: 'DIDŽIOJI GLEIVĖ', up_power: 'DVIGUBA GLEIVĖ', upd_rate: 'DAUGIAU GLEIVIŲ PER SEKUNDĘ', upd_big: 'GREIČIAU PRISIPILDO', upd_power: 'TIKIMYBĖ GAUTI DVIGUBĄ',
-    max: 'MAKS.', wear: 'DĖVĖTI', worn: 'DĖVIMA', free: 'NEMOKAMAI +60', x2: '×2', boss: 'BOSAS!', worldClear: 'PASAULIS ĮVEIKTAS!', theEnd: 'LAIMĖJAI! PABAIGA', rotate: 'PASUK TELEFONĄ', hintKb: 'PELĖ ARBA W/S - TAIKYTI · E - DIDŽIOJI',
+    max: 'MAKS.', wear: 'DĖVĖTI', worn: 'DĖVIMA', noAd: 'REKLAMOS DABAR NĖRA - BANDYK VĖLIAU', free: 'NEMOKAMAI +60', x2: '×2', boss: 'BOSAS!', worldClear: 'PASAULIS ĮVEIKTAS!', theEnd: 'LAIMĖJAI! PABAIGA', rotate: 'PASUK TELEFONĄ', hintKb: 'PELĖ ARBA W/S - TAIKYTI · E - DIDŽIOJI',
     tAim: 'JUDINK IR TAIKYK - ×2 VARTAI SKAIDO!', tRed: 'VENK RAUDONŲ VARTŲ!', tBubble: 'SPROGDINK BURBULUS - BUS DAUGIAU', tBig: 'DIDŽIOJI GLEIVĖ PARUOŠTA! SPAUSK (E)',
     feat: ['', 'DRUSKA ĖDA GLEIVES - PRAMUŠK!', 'ANT LEDO GLEIVĖS GREITESNĖS', 'ŽELĖ ATMUŠA GLEIVES', 'GARAI STUMIA GLEIVES', 'PORTALAI PERKELIA GLEIVES'],
     tips: ['PATARIMAS: TAIKYK Į ×3 VARTUS', 'PATARIMAS: PATOBULINK PARDUOTUVĖJE', 'PATARIMAS: DIDŽIOJI TRAIŠKO AKMENIS', 'PATARIMAS: STABDYK AKMENIS PRIE MAMOS'] },
@@ -22,7 +22,7 @@ const LANGS = {
     wn: ['ЗЕЛЁНЫЙ ЛУГ', 'СОЛНЕЧНАЯ ПУСТЫНЯ', 'СНЕЖНЫЕ ХОЛМЫ', 'КОНФЕТНАЯ СТРАНА', 'ВУЛКАН', 'КОСМОС'],
     win: 'ПОБЕДА!', lose: 'О НЕТ!', next: 'ДАЛЕЕ', retry: 'ЕЩЁ РАЗ', upgrades: 'УЛУЧШЕНИЯ', hats: 'ШАПКИ', colors: 'ЦВЕТА',
     up_rate: 'СКОРОСТРЕЛЬНОСТЬ', up_big: 'БОЛЬШОЙ СЛАЙМ', up_power: 'ДВОЙНОЙ СЛАЙМ', upd_rate: 'БОЛЬШЕ СЛАЙМОВ В СЕКУНДУ', upd_big: 'ЗАРЯЖАЕТСЯ БЫСТРЕЕ', upd_power: 'ШАНС ДВОЙНОГО СЛАЙМА',
-    max: 'МАКС', wear: 'НАДЕТЬ', worn: 'НАДЕТО', free: 'БЕСПЛАТНО +60', x2: '×2', boss: 'БОСС!', worldClear: 'МИР ПРОЙДЕН!', theEnd: 'ПОБЕДА! КОНЕЦ', rotate: 'ПОВЕРНИ ТЕЛЕФОН', hintKb: 'МЫШЬ ИЛИ W/S - ЦЕЛЬ · E - БОЛЬШОЙ',
+    max: 'МАКС', wear: 'НАДЕТЬ', worn: 'НАДЕТО', noAd: 'РЕКЛАМЫ СЕЙЧАС НЕТ - ПОПРОБУЙ ПОЗЖЕ', free: 'БЕСПЛАТНО +60', x2: '×2', boss: 'БОСС!', worldClear: 'МИР ПРОЙДЕН!', theEnd: 'ПОБЕДА! КОНЕЦ', rotate: 'ПОВЕРНИ ТЕЛЕФОН', hintKb: 'МЫШЬ ИЛИ W/S - ЦЕЛЬ · E - БОЛЬШОЙ',
     tAim: 'ДВИГАЙСЯ И ЦЕЛЬСЯ - ×2 ДЕЛЯТ СЛАЙМОВ!', tRed: 'ИЗБЕГАЙ КРАСНЫХ ВОРОТ!', tBubble: 'ЛОПАЙ ПУЗЫРИ - БУДЕТ БОЛЬШЕ', tBig: 'БОЛЬШОЙ СЛАЙМ ГОТОВ! ЖМИ (E)',
     feat: ['', 'СОЛЬ ЕСТ СЛАЙМОВ - ПРОБЕЙ!', 'НА ЛЬДУ СЛАЙМЫ БЫСТРЕЕ', 'ЖЕЛЕ ОТБИВАЕТ СЛАЙМОВ', 'ПАР ТОЛКАЕТ СЛАЙМОВ', 'ПОРТАЛЫ ПЕРЕНОСЯТ СЛАЙМОВ'],
     tips: ['СОВЕТ: ЦЕЛЬСЯ В ×3', 'СОВЕТ: УЛУЧШЕНИЯ В МАГАЗИНЕ', 'СОВЕТ: БОЛЬШОЙ ДАВИТ КАМНИ', 'СОВЕТ: ОСТАНАВЛИВАЙ КАМНИ У МАМЫ'] },
@@ -30,7 +30,7 @@ const LANGS = {
     wn: ['PRADO VERDE', 'DESIERTO SOLEADO', 'COLINAS NEVADAS', 'PAÍS DULCE', 'VOLCÁN', 'ESPACIO'],
     win: '¡VICTORIA!', lose: '¡OH NO!', next: 'SIGUIENTE', retry: 'REINTENTAR', upgrades: 'MEJORAS', hats: 'SOMBREROS', colors: 'COLORES',
     up_rate: 'CADENCIA', up_big: 'SLIME GIGANTE', up_power: 'SLIME DOBLE', upd_rate: 'MÁS SLIMES POR SEGUNDO', upd_big: 'SE CARGA MÁS RÁPIDO', upd_power: 'PROBABILIDAD DE DOBLE',
-    max: 'MÁX', wear: 'PONER', worn: 'PUESTO', free: 'GRATIS +60', x2: '×2', boss: '¡JEFE!', worldClear: '¡MUNDO SUPERADO!', theEnd: '¡GANASTE! FIN', rotate: 'GIRA EL TELÉFONO', hintKb: 'RATÓN O W/S PARA APUNTAR · E = GIGANTE',
+    max: 'MÁX', wear: 'PONER', worn: 'PUESTO', noAd: 'NO HAY ANUNCIO - INTÉNTALO LUEGO', free: 'GRATIS +60', x2: '×2', boss: '¡JEFE!', worldClear: '¡MUNDO SUPERADO!', theEnd: '¡GANASTE! FIN', rotate: 'GIRA EL TELÉFONO', hintKb: 'RATÓN O W/S PARA APUNTAR · E = GIGANTE',
     tAim: '¡MUÉVETE Y APUNTA A LAS PUERTAS ×2!', tRed: '¡EVITA LAS PUERTAS ROJAS!', tBubble: 'REVIENTA BURBUJAS PARA MÁS SLIMES', tBig: '¡SLIME GIGANTE LISTO! PULSA (E)',
     feat: ['', 'LA SAL COME SLIMES - ¡RÓMPELA!', 'EL HIELO ACELERA', 'LA GELATINA REBOTA', 'EL VAPOR EMPUJA', 'LOS PORTALES TELETRANSPORTAN'],
     tips: ['CONSEJO: APUNTA A ×3', 'CONSEJO: MEJORA EN LA TIENDA', 'CONSEJO: EL GIGANTE APLASTA ROCAS', 'CONSEJO: FRENA LAS ROCAS PRONTO'] },
@@ -38,7 +38,7 @@ const LANGS = {
     wn: ['PRADO VERDE', 'DESERTO DO SOL', 'COLINAS NEVADAS', 'TERRA DOCE', 'VULCÃO', 'ESPAÇO'],
     win: 'VITÓRIA!', lose: 'AH NÃO!', next: 'PRÓXIMO', retry: 'DE NOVO', upgrades: 'MELHORIAS', hats: 'CHAPÉUS', colors: 'CORES',
     up_rate: 'CADÊNCIA', up_big: 'SLIME GIGANTE', up_power: 'SLIME DUPLO', upd_rate: 'MAIS SLIMES POR SEGUNDO', upd_big: 'CARREGA MAIS RÁPIDO', upd_power: 'CHANCE DE SLIME DUPLO',
-    max: 'MÁX', wear: 'USAR', worn: 'USANDO', free: 'GRÁTIS +60', x2: '×2', boss: 'CHEFE!', worldClear: 'MUNDO CONCLUÍDO!', theEnd: 'VOCÊ VENCEU! FIM', rotate: 'GIRE O CELULAR', hintKb: 'MOUSE OU W/S PARA MIRAR · E = GIGANTE',
+    max: 'MÁX', wear: 'USAR', worn: 'USANDO', noAd: 'SEM ANÚNCIO AGORA - TENTE DEPOIS', free: 'GRÁTIS +60', x2: '×2', boss: 'CHEFE!', worldClear: 'MUNDO CONCLUÍDO!', theEnd: 'VOCÊ VENCEU! FIM', rotate: 'GIRE O CELULAR', hintKb: 'MOUSE OU W/S PARA MIRAR · E = GIGANTE',
     tAim: 'MOVA E MIRE NOS PORTÕES ×2!', tRed: 'EVITE PORTÕES VERMELHOS!', tBubble: 'ESTOURE BOLHAS PARA MAIS SLIMES', tBig: 'SLIME GIGANTE PRONTO! TOQUE (E)',
     feat: ['', 'O SAL COME SLIMES - QUEBRE!', 'O GELO ACELERA', 'A GELATINA REBATE', 'O VAPOR EMPURRA', 'PORTAIS TELETRANSPORTAM'],
     tips: ['DICA: MIRE NO ×3', 'DICA: MELHORE NA LOJA', 'DICA: O GIGANTE ESMAGA PEDRAS', 'DICA: PARE AS PEDRAS CEDO'] },
@@ -46,7 +46,7 @@ const LANGS = {
     wn: ['PRAIRIE VERTE', 'DÉSERT DU SOLEIL', 'COLLINES ENNEIGÉES', 'PAYS DES BONBONS', 'VOLCAN', 'ESPACE'],
     win: 'VICTOIRE !', lose: 'OH NON !', next: 'SUIVANT', retry: 'REJOUER', upgrades: 'AMÉLIORATIONS', hats: 'CHAPEAUX', colors: 'COULEURS',
     up_rate: 'CADENCE', up_big: 'GROS SLIME', up_power: 'SLIME DOUBLE', upd_rate: 'PLUS DE SLIMES PAR SECONDE', upd_big: 'SE CHARGE PLUS VITE', upd_power: 'CHANCE DE SLIME DOUBLE',
-    max: 'MAX', wear: 'PORTER', worn: 'PORTÉ', free: 'GRATUIT +60', x2: '×2', boss: 'BOSS !', worldClear: 'MONDE TERMINÉ !', theEnd: 'GAGNÉ ! FIN', rotate: 'TOURNE TON TÉLÉPHONE', hintKb: 'SOURIS OU W/S POUR VISER · E = GROS',
+    max: 'MAX', wear: 'PORTER', worn: 'PORTÉ', noAd: 'PAS DE PUB - RÉESSAIE PLUS TARD', free: 'GRATUIT +60', x2: '×2', boss: 'BOSS !', worldClear: 'MONDE TERMINÉ !', theEnd: 'GAGNÉ ! FIN', rotate: 'TOURNE TON TÉLÉPHONE', hintKb: 'SOURIS OU W/S POUR VISER · E = GROS',
     tAim: 'BOUGE ET VISE LES PORTES ×2 !', tRed: 'ÉVITE LES PORTES ROUGES !', tBubble: 'ÉCLATE LES BULLES POUR PLUS DE SLIMES', tBig: 'GROS SLIME PRÊT ! APPUIE (E)',
     feat: ['', 'LE SEL MANGE LES SLIMES - CASSE-LE !', 'LA GLACE ACCÉLÈRE', 'LA GELÉE FAIT REBONDIR', 'LA VAPEUR POUSSE', 'LES PORTAILS TÉLÉPORTENT'],
     tips: ['ASTUCE : VISE LES ×3', 'ASTUCE : AMÉLIORE À LA BOUTIQUE', 'ASTUCE : LE GROS ÉCRASE LES ROCHES', 'ASTUCE : ARRÊTE LES ROCHES TÔT'] },
@@ -54,7 +54,7 @@ const LANGS = {
     wn: ['GRÜNE WIESE', 'SONNENWÜSTE', 'SCHNEEHÜGEL', 'SÜSSIGKEITENLAND', 'VULKAN', 'WELTRAUM'],
     win: 'SIEG!', lose: 'OH NEIN!', next: 'WEITER', retry: 'NOCHMAL', upgrades: 'UPGRADES', hats: 'HÜTE', colors: 'FARBEN',
     up_rate: 'FEUERRATE', up_big: 'RIESENSCHLEIM', up_power: 'DOPPELSCHLEIM', upd_rate: 'MEHR SCHLEIME PRO SEKUNDE', upd_big: 'LÄDT SCHNELLER', upd_power: 'CHANCE AUF DOPPELTEN',
-    max: 'MAX', wear: 'TRAGEN', worn: 'AN', free: 'GRATIS +60', x2: '×2', boss: 'BOSS!', worldClear: 'WELT GESCHAFFT!', theEnd: 'GEWONNEN! ENDE', rotate: 'HANDY DREHEN', hintKb: 'MAUS ODER W/S ZIELEN · E = RIESE',
+    max: 'MAX', wear: 'TRAGEN', worn: 'AN', noAd: 'GERADE KEINE WERBUNG - SPÄTER NOCHMAL', free: 'GRATIS +60', x2: '×2', boss: 'BOSS!', worldClear: 'WELT GESCHAFFT!', theEnd: 'GEWONNEN! ENDE', rotate: 'HANDY DREHEN', hintKb: 'MAUS ODER W/S ZIELEN · E = RIESE',
     tAim: 'BEWEGEN UND AUF ×2-TORE ZIELEN!', tRed: 'MEIDE ROTE TORE!', tBubble: 'PLATZE BLASEN FÜR MEHR SCHLEIM', tBig: 'RIESENSCHLEIM BEREIT! DRÜCKE (E)',
     feat: ['', 'SALZ FRISST SCHLEIM - DURCHBRECHEN!', 'EIS MACHT SCHNELL', 'GELEE LÄSST ABPRALLEN', 'DAMPF SCHIEBT', 'PORTALE TELEPORTIEREN'],
     tips: ['TIPP: ZIELE AUF ×3', 'TIPP: UPGRADES IM SHOP', 'TIPP: DER RIESE ZERDRÜCKT STEINE', 'TIPP: STOPPE STEINE FRÜH'] },
@@ -62,7 +62,7 @@ const LANGS = {
     wn: ['PRATO VERDE', 'DESERTO DEL SOLE', 'COLLINE INNEVATE', 'PAESE DEI DOLCI', 'VULCANO', 'SPAZIO'],
     win: 'VITTORIA!', lose: 'OH NO!', next: 'AVANTI', retry: 'RIPROVA', upgrades: 'POTENZIAMENTI', hats: 'CAPPELLI', colors: 'COLORI',
     up_rate: 'CADENZA', up_big: 'SLIME GIGANTE', up_power: 'SLIME DOPPIO', upd_rate: 'PIÙ SLIME AL SECONDO', upd_big: 'SI CARICA PIÙ IN FRETTA', upd_power: 'PROBABILITÀ DI DOPPIO',
-    max: 'MAX', wear: 'INDOSSA', worn: 'INDOSSATO', free: 'GRATIS +60', x2: '×2', boss: 'BOSS!', worldClear: 'MONDO COMPLETATO!', theEnd: 'HAI VINTO! FINE', rotate: 'RUOTA IL TELEFONO', hintKb: 'MOUSE O W/S PER MIRARE · E = GIGANTE',
+    max: 'MAX', wear: 'INDOSSA', worn: 'INDOSSATO', noAd: 'NESSUN ANNUNCIO ORA - RIPROVA DOPO', free: 'GRATIS +60', x2: '×2', boss: 'BOSS!', worldClear: 'MONDO COMPLETATO!', theEnd: 'HAI VINTO! FINE', rotate: 'RUOTA IL TELEFONO', hintKb: 'MOUSE O W/S PER MIRARE · E = GIGANTE',
     tAim: 'MUOVITI E MIRA ALLE PORTE ×2!', tRed: 'EVITA LE PORTE ROSSE!', tBubble: 'SCOPPIA LE BOLLE PER PIÙ SLIME', tBig: 'SLIME GIGANTE PRONTO! PREMI (E)',
     feat: ['', 'IL SALE MANGIA GLI SLIME - SFONDALO!', 'IL GHIACCIO ACCELERA', 'LA GELATINA RIMBALZA', 'IL VAPORE SPINGE', 'I PORTALI TELETRASPORTANO'],
     tips: ['CONSIGLIO: MIRA AI ×3', 'CONSIGLIO: POTENZIA NEL NEGOZIO', 'CONSIGLIO: IL GIGANTE SCHIACCIA I SASSI', 'CONSIGLIO: FERMA I SASSI PRESTO'] },
@@ -70,7 +70,7 @@ const LANGS = {
     wn: ['ZIELONA ŁĄKA', 'SŁONECZNA PUSTYNIA', 'ŚNIEŻNE WZGÓRZA', 'KRAINA SŁODYCZY', 'WULKAN', 'KOSMOS'],
     win: 'ZWYCIĘSTWO!', lose: 'O NIE!', next: 'DALEJ', retry: 'JESZCZE RAZ', upgrades: 'ULEPSZENIA', hats: 'CZAPKI', colors: 'KOLORY',
     up_rate: 'SZYBKOSTRZELNOŚĆ', up_big: 'WIELKI GLUTEK', up_power: 'PODWÓJNY GLUTEK', upd_rate: 'WIĘCEJ GLUTKÓW NA SEKUNDĘ', upd_big: 'ŁADUJE SIĘ SZYBCIEJ', upd_power: 'SZANSA NA PODWÓJNEGO',
-    max: 'MAX', wear: 'ZAŁÓŻ', worn: 'ZAŁOŻONE', free: 'ZA DARMO +60', x2: '×2', boss: 'BOSS!', worldClear: 'ŚWIAT UKOŃCZONY!', theEnd: 'WYGRANA! KONIEC', rotate: 'OBRÓĆ TELEFON', hintKb: 'MYSZ LUB W/S - CELUJ · E = WIELKI',
+    max: 'MAX', wear: 'ZAŁÓŻ', worn: 'ZAŁOŻONE', noAd: 'BRAK REKLAMY - SPRÓBUJ PÓŹNIEJ', free: 'ZA DARMO +60', x2: '×2', boss: 'BOSS!', worldClear: 'ŚWIAT UKOŃCZONY!', theEnd: 'WYGRANA! KONIEC', rotate: 'OBRÓĆ TELEFON', hintKb: 'MYSZ LUB W/S - CELUJ · E = WIELKI',
     tAim: 'RUSZAJ I CELUJ W BRAMY ×2!', tRed: 'UNIKAJ CZERWONYCH BRAM!', tBubble: 'PRZEBIJAJ BAŃKI PO WIĘCEJ GLUTKÓW', tBig: 'WIELKI GLUTEK GOTOWY! WCIŚNIJ (E)',
     feat: ['', 'SÓL ZJADA GLUTKI - PRZEBIJ JĄ!', 'LÓD PRZYSPIESZA', 'GALARETKA ODBIJA', 'PARA PCHA', 'PORTALE TELEPORTUJĄ'],
     tips: ['RADA: CELUJ W ×3', 'RADA: ULEPSZ W SKLEPIE', 'RADA: WIELKI MIAŻDŻY SKAŁY', 'RADA: ZATRZYMUJ SKAŁY WCZEŚNIE'] },
@@ -78,7 +78,7 @@ const LANGS = {
     wn: ['YEŞİL ÇAYIR', 'GÜNEŞLİ ÇÖL', 'KARLI TEPELER', 'ŞEKER DİYARI', 'YANARDAĞ', 'UZAY'],
     win: 'ZAFER!', lose: 'EYVAH!', next: 'İLERİ', retry: 'TEKRAR', upgrades: 'GELİŞTİRMELER', hats: 'ŞAPKALAR', colors: 'RENKLER',
     up_rate: 'ATIŞ HIZI', up_big: 'DEV SLIME', up_power: 'ÇİFT SLIME', upd_rate: 'SANİYEDE DAHA ÇOK SLIME', upd_big: 'DAHA HIZLI DOLAR', upd_power: 'ÇİFT SLIME ŞANSI',
-    max: 'MAKS', wear: 'GİY', worn: 'GİYİLDİ', free: 'BEDAVA +60', x2: '×2', boss: 'BOSS!', worldClear: 'DÜNYA BİTTİ!', theEnd: 'KAZANDIN! SON', rotate: 'TELEFONU ÇEVİR', hintKb: 'FARE VEYA W/S NİŞAN · E = DEV',
+    max: 'MAKS', wear: 'GİY', worn: 'GİYİLDİ', noAd: 'ŞU AN REKLAM YOK - SONRA DENE', free: 'BEDAVA +60', x2: '×2', boss: 'BOSS!', worldClear: 'DÜNYA BİTTİ!', theEnd: 'KAZANDIN! SON', rotate: 'TELEFONU ÇEVİR', hintKb: 'FARE VEYA W/S NİŞAN · E = DEV',
     tAim: 'HAREKET ET, ×2 KAPILARA NİŞAN AL!', tRed: 'KIRMIZI KAPILARDAN KAÇ!', tBubble: 'DAHA ÇOK SLIME İÇİN BALONLARI PATLAT', tBig: 'DEV SLIME HAZIR! BAS (E)',
     feat: ['', 'TUZ SLIME YER - KIR GEÇ!', 'BUZ HIZLANDIRIR', 'JÖLE SEKTİRİR', 'BUHAR İTER', 'PORTALLAR IŞINLAR'],
     tips: ['İPUCU: ×3 KAPILARA NİŞAN AL', 'İPUCU: MAĞAZADAN GELİŞTİR', 'İPUCU: DEV SLIME KAYA EZER', 'İPUCU: KAYALARI ERKEN DURDUR'] },
@@ -87,7 +87,7 @@ const LANG_ORDER = ['en', 'lt', 'ru', 'es', 'pt', 'fr', 'de', 'it', 'pl', 'tr'];
 let LANG = 'en';
 const T = k => { const v = (LANGS[LANG] || LANGS.en)[k]; return v !== undefined ? v : LANGS.en[k] !== undefined ? LANGS.en[k] : k; };
 function langInit() {
-  let l = save.lang; if (!l) { const n = (navigator.language || 'en').slice(0, 2).toLowerCase(); l = LANGS[n] ? n : 'en'; }
+  let l = save.lang; if (!l) { const n = String((Plat.kind === 'crazy' ? Plat.locale() : navigator.language) || 'en').slice(0, 2).toLowerCase(); l = LANGS[n] ? n : 'en'; }
   LANG = LANGS[l] ? l : 'en'; document.documentElement.lang = LANG; const r = document.getElementById('rotT'); if (r) r.textContent = T('rotate');
 }
 function langSet(l) { LANG = l; save.lang = l; persist(); langInit(); }

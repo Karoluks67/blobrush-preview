@@ -150,7 +150,7 @@ function finishLevel() {
     const c = 20 + LV * 4 + st * 5 + (prev ? 0 : 15); res = { win, coins: c, stars: st, first: !prev, t: 0, shown: 0, dbl: false }; }
   else res = { win, coins: Math.max(5, L.popped), stars: 0, t: 0, shown: 0, dbl: false };
   save.coins += res.coins; save.pops = (save.pops || 0) + L.popped; persist();
-  state = 'result'; stT = 0; resFx = []; Poki.stop();
+  state = 'result'; stT = 0; resFx = []; Plat.stop();
 }
 function drawResult(dt) {
   drawPlay(0); res.t += dt; ctx.fillStyle = 'rgba(10,8,20,.62)'; ctx.fillRect(0, 0, GW, GH);
@@ -170,7 +170,7 @@ function drawResult(dt) {
   /* monetos skaičiuojamos */
   const target = res.coins * (res.dbl ? 2 : 1); if (res.shown < target && res.t > .6) { res.shown = Math.min(target, res.shown + Math.max(1, Math.ceil(target * dt * 1.6))); if (Math.floor(res.t * 20) % 2) sfx('coin', 1 + res.shown / target * .6); }
   coinIcon(214, y0 + 82); text('+' + res.shown, 224, y0 + 81, 2, COL.coin, 0);
-  if (!res.dbl) { btn(296, y0 + 76, 58, 20, T('x2'), '#8A5A10', doubleCoins, 1, 9); adIcon(300, y0 + 82); }
+  if (!res.dbl && Plat.canReward) { btn(296, y0 + 76, 58, 20, T('x2'), '#8A5A10', doubleCoins, 1, 9); adIcon(300, y0 + 82); }
   if (res.win) { btn(180, y0 + 108, 120, 28, LV + 1 < LEVELS.length ? T('next') : T('map'), COL.btn, nextLevel, 2, 0); btn(180, y0 + 142, 58, 20, T('retry'), COL.panel2, retryLevel, 1, 1); btn(242, y0 + 142, 58, 20, T('map'), COL.panel2, () => toMap(), 1, 2); }
   else { btn(180, y0 + 108, 120, 28, T('retry'), COL.btn, retryLevel, 2, 0); btn(180, y0 + 142, 58, 20, T('shop'), '#8A5A10', () => openShop('result'), 1, 1); btn(242, y0 + 142, 58, 20, T('map'), COL.panel2, () => toMap(), 1, 2); }
   coinIcon(186, y0 + 172); text(save.coins, 196, y0 + 171, 1, COL.coin, 0);
@@ -185,25 +185,25 @@ function shine(x, y, w, h, t) {
   for (let i = 0; i < h; i++) ctx.fillRect(sx - (i >> 1), y + i, 5, 1); ctx.fillStyle = 'rgba(255,255,255,.18)'; for (let i = 0; i < h; i++) ctx.fillRect(sx + 7 - (i >> 1), y + i, 2, 1);
   ctx.restore();
 }
-function doubleCoins() { if (res.dbl) return; Poki.rewarded().then(ok => { if (ok && !res.dbl) { res.dbl = true; save.coins += res.coins; persist(); sfx('buy'); } }); }
+function doubleCoins() { if (res.dbl) return; Plat.rewarded().then(ok => { if (ok && !res.dbl) { res.dbl = true; save.coins += res.coins; persist(); sfx('buy'); } }); }
 function nextLevel() {
-  const n = LV + 1; state = 'wait';
-  Poki.commercial().then(() => { if (n >= LEVELS.length) { wipe(() => { state = 'theEnd'; stT = 0; }); return; } if (n % 10 === 0) { wipe(() => { state = 'worldClear'; stT = 0; }); return; } wipe(() => playLevel(n)); });
+  const n = LV + 1; state = 'wait'; if (n % 10 === 0) Plat.happy();
+  (res && res.dbl ? Promise.resolve() : Plat.commercial()).then(() => { if (n >= LEVELS.length) { wipe(() => { state = 'theEnd'; stT = 0; }); return; } if (n % 10 === 0) { wipe(() => { state = 'worldClear'; stT = 0; }); return; } wipe(() => playLevel(n)); });
 }
-function retryLevel() { state = 'wait'; Poki.commercial().then(() => wipe(() => playLevel(LV))); }
-function playLevel(i) { startLevel(i); state = 'play'; stT = 0; kbY = null; ptr.dy = 0; Poki.start(); }
-function pauseGame() { if (state !== 'play') return; state = 'pause'; Poki.stop(); }
-function resumeGame() { state = 'play'; Poki.start(); }
+function retryLevel() { state = 'wait'; (res && res.dbl ? Promise.resolve() : Plat.commercial()).then(() => wipe(() => playLevel(LV))); }
+function playLevel(i) { startLevel(i); state = 'play'; stT = 0; kbY = null; ptr.dy = 0; Plat.start(); }
+function pauseGame() { if (state !== 'play') return; state = 'pause'; Plat.stop(); }
+function resumeGame() { state = 'play'; Plat.start(); }
 function onBlur() { if (state === 'play' && !L.win && !L.lose) pauseGame(); }
 function drawPause() {
   ctx.fillStyle = 'rgba(10,8,20,.72)'; ctx.fillRect(0, 0, GW, GH);
   text(T('paused'), 240, 50, 3, COL.txt, .5);
   btn(170, 88, 140, 28, T('resume'), COL.btn, resumeGame, 2, 0);
-  btn(170, 124, 140, 22, T('restart'), COL.panel2, () => { state = 'wait'; Poki.commercial().then(() => wipe(() => playLevel(LV))); }, 1, 1);
+  btn(170, 124, 140, 22, T('restart'), COL.panel2, () => { Plat.stop(); wipe(() => playLevel(LV)); }, 1, 1);
   btn(170, 152, 140, 22, T('map'), COL.panel2, () => toMap(), 1, 2);
   btn(170, 180, 140, 22, T('settings'), COL.panel2, () => openSettings('pause'), 1, 3);
 }
-function toMap() { Poki.stop(); wipe(() => { state = 'map'; mapW = clamp(Math.floor(Math.min(LV, save.unlocked - 1) / 10), 0, WN - 1); mapSel = clamp(Math.min(save.unlocked - 1, LEVELS.length - 1) - mapW * 10, 0, 9); if (LV >= mapW * 10 && LV < mapW * 10 + 10) mapSel = Math.min(9, LV % 10 + (save.unlocked > LV + 1 ? 1 : 0)); mapWalk = null; }); }
+function toMap() { Plat.stop(); wipe(() => { state = 'map'; mapW = clamp(Math.floor(Math.min(LV, save.unlocked - 1) / 10), 0, WN - 1); mapSel = clamp(Math.min(save.unlocked - 1, LEVELS.length - 1) - mapW * 10, 0, 9); if (LV >= mapW * 10 && LV < mapW * 10 + 10) mapSel = Math.min(9, LV % 10 + (save.unlocked > LV + 1 ? 1 : 0)); mapWalk = null; }); }
 
 /* ---------- Parduotuvė: patobulinimai, kepurės, spalvos ---------- */
 let SHOP_FROM = 'title', shopTab = 0, freeT = 0;
@@ -233,8 +233,8 @@ function drawShop(dt) {
       if (lv >= U.max) text(T('max'), right + 250, y + 18, 1, COL.good, .5);
       else { const c = U.cost[lv]; btn(right + 200, y + 10, 88, 24, null, save.coins >= c ? COL.btn : '#4A3A3A', () => buy(c, () => { save.up[k]++; }), 1, 10 + i); coinIcon(right + 214, y + 19); text(c, right + 224, y + 18, 1, save.coins >= c ? '#FFFFFF' : '#C89A9A', 0); } });
     /* nemokamos monetos už reklamą */
-    btn(right, 222, 296, 26, null, freeT > 0 ? '#2A2636' : '#8A5A10', () => { if (freeT > 0) return; Poki.rewarded().then(ok => { if (ok) { save.coins += 60; persist(); sfx('buy'); freeT = 90; } }); }, 1, 20);
-    if (freeT <= 0) adIcon(right + 80, 231); coinIcon(right + 96, 232); text(freeT > 0 ? Math.ceil(freeT) + 's' : T('free'), right + 106, 231, 1, freeT > 0 ? COL.dim : '#FFFFFF', 0);
+    if (Plat.canReward) { btn(right, 222, 296, 26, null, freeT > 0 ? '#2A2636' : '#8A5A10', () => { if (freeT > 0) return; Plat.rewarded().then(ok => { if (ok) { save.coins += 60; persist(); sfx('buy'); freeT = 90; } else freeT = 20; }); }, 1, 20);
+      if (freeT <= 0) adIcon(right + 80, 231); coinIcon(right + 96, 232); text(freeT > 0 ? Math.ceil(freeT) + 's' : T('free'), right + 106, 231, 1, freeT > 0 ? COL.dim : '#FFFFFF', 0); }
   } else if (shopTab === 1) {
     HATS.forEach((H, i) => { const x = right + (i % 4) * 74, y = 66 + Math.floor(i / 4) * 78, own = save.hats.indexOf(i) >= 0, on = save.hat === i;
       panel(x, y, 68, 72, on ? '#3E3468' : COL.panel2, on ? COL.acc : COL.edge);
@@ -271,7 +271,7 @@ function startGame() { const i = Math.min(LEVELS.length - 1, Math.max(0, save.un
 let last = performance.now(), acc = 0;
 function frame(now) {
   requestAnimationFrame(frame);
-  let dt = Math.min(.05, (now - last) / 1000); last = now; gt += dt; stT += dt;
+  let dt = clamp((now - last) / 1000, 0, .05); last = now; gt += dt; stT += dt;
   BTN = BTN_NEXT; BTN_NEXT = []; PAD = padRead();
   if (PAD && padPress('start')) { if (state === 'play') pauseGame(); else if (state === 'pause') resumeGame(); else if (state === 'title') startGame(); else if (state === 'map') mapClick(mapSel); }
   if (PAD && state === 'map' && !mapWalk) { if (PAD.x > 0 && !(padPrev.x > 0)) mapMove(1); else if (PAD.x < 0 && !(padPrev.x < 0)) mapMove(-1); if (padPress('ok')) mapClick(mapSel); if (padPress('back')) wipe(() => { state = 'title'; }); }
@@ -294,15 +294,17 @@ function frame(now) {
   else if (state === 'worldClear') drawWorldClear(dt);
   else if (state === 'theEnd') drawTheEnd(dt);
   drawWipe(dt);
-  if (Poki.adShow) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, GW, GH); text('AD (LOCAL TEST)', 240, 130, 2, '#fff', .5); }
+  if (Plat.msg > 0) { Plat.msg -= dt; tip(T('noAd'), GH - 30); }
+  if (Plat.adShow) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, GW, GH); text('AD (LOCAL TEST)', 240, 130, 2, '#fff', .5); }
   padPrev = PAD ? Object.assign({}, PAD) : {};
   present();
 }
 async function boot() {
   requestAnimationFrame(frame);
   loadSave(); langInit();
-  let font = null; try { [font] = await Promise.all([loadJson('assets/font.json'), Poki.init()]); } catch (_) { }
+  let font = null; try { [font] = await Promise.all([loadJson('assets/font.json'), Plat.init()]); } catch (_) { }
+  syncSave(); langInit(); setVol();
   if (font) fontInit(font);
-  bootDone = true; Poki.loaded();
+  bootDone = true; Plat.loaded();
 }
 if (!/[?&]solver/.test(location.search)) boot();
