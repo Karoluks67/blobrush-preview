@@ -129,7 +129,7 @@ function drawMapScreen(dt) {
     else { ctx.fillStyle = '#7A7290'; ctx.fillRect(x - 2, y - 1, 5, 4); ctx.fillRect(x - 1, y - 3, 1, 2); ctx.fillRect(x + 1, y - 3, 1, 2); }
     if (st) for (let s = 0; s < 3; s++) starIcon(x - 8 + s * 6, y + 9, s < st);
     if (cur) { const p = Math.floor(gt * 4) % 2; ctx.fillStyle = '#FFFFFF'; for (const [a, b] of [[-10, -8], [10, -8], [-10, 8], [10, 8]]) ctx.fillRect(x + a - (a < 0 ? p : -p), y + b, 2, 1); }
-    button(x - 10, y - 10, 20, 20, () => mapClick(i)); });
+    button(x - 16, y - 16, 32, 32, () => mapClick(i)); });
   /* mama eina taku */
   let ax, ay;
   if (mapWalk) { mapWalk.t += dt * 4; const k = smooth(mapWalk.t), a = N[mapWalk.from], b = N[mapWalk.to]; ax = lerp(a[0], b[0], k); ay = lerp(a[1], b[1], k) - Math.abs(Math.sin(k * Math.PI * 3)) * 4; if (mapWalk.t >= 1) mapWalk = null; }

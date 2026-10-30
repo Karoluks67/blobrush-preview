@@ -18,12 +18,15 @@ let ctx = lo.getContext('2d');   // piešimo kontekstas (laikinai keičiamas did
 let K = 2;
 function resize() {
   const vw = innerWidth, vh = innerHeight, dpr = Math.min(3, devicePixelRatio || 1);
-  const pw = vw * dpr, ph = vh * dpr;
-  K = Math.max(1, Math.floor(Math.min(pw / GW, ph / GH)));   // sveikas mastelis - pikseliai aštrūs
-  if (Math.min(pw / GW, ph / GH) - K > .35 && pw / GW < 3) K = Math.min(pw / GW, ph / GH);   // mažas ekranas: geriau trupmeninis nei didelis rėmas
-  const w = Math.floor(GW * K), h = Math.floor(GH * K);
-  cv.width = w; cv.height = h; cv.style.width = w / dpr + 'px'; cv.style.height = h / dpr + 'px';
-  cv.style.left = Math.floor((vw - w / dpr) / 2) + 'px'; cv.style.top = Math.floor((vh - h / dpr) / 2) + 'px';
+  const f = Math.min(vw * dpr / GW, vh * dpr / GH), k = Math.floor(f);
+  /* sveikas mastelis, jei jis praranda < 10 % ekrano; kitaip (telefonai, Poki rėmas) - užpildyti ekraną:
+     piešiama sveiku ceil(f) masteliu ir švelniai sumažinama, kad visi pikseliai liktų vienodo dydžio */
+  const crisp = k >= 1 && k / f >= .9, s = crisp ? k : f;
+  K = crisp ? k : Math.ceil(f);
+  cv.width = GW * K; cv.height = GH * K; cv.style.imageRendering = crisp ? '' : 'auto';
+  const cw = Math.floor(GW * s) / dpr, ch = Math.floor(GH * s) / dpr;
+  cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
+  cv.style.left = Math.floor((vw - cw) / 2) + 'px'; cv.style.top = Math.floor((vh - ch) / 2) + 'px';
   ctx.imageSmoothingEnabled = false; cx2.imageSmoothingEnabled = false;
 }
 addEventListener('resize', resize); resize();
@@ -92,7 +95,7 @@ cv.addEventListener('pointermove', e => {
   if (e.pointerType === 'mouse') { ptr.y = py; ptr.mouse = true; }
   if (ptr.down && e.pointerId === ptr.id && !ptr.mouse) { ptr.dy += py - ptr.ly; ptr.ly = py; }
 });
-function ptrUp(e) { if (e.pointerId === ptr.id) { ptr.down = false; ptr.id = null; } }
+function ptrUp(e) { audioInit(); if (e.pointerId === ptr.id) { ptr.down = false; ptr.id = null; } }
 cv.addEventListener('pointerup', ptrUp); cv.addEventListener('pointercancel', ptrUp);
 cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover = null; });
 cv.addEventListener('contextmenu', e => e.preventDefault());

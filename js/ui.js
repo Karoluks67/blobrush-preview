@@ -76,7 +76,7 @@ function drawBoss(B, W) {
   const x = Math.round(B.x), y = Math.round(B.y), k = B.hp / B.hp0; ctx.fillStyle = OUT; ctx.fillRect(x - 17, y - 41, 34, 5); ctx.fillStyle = '#3A2A3A'; ctx.fillRect(x - 16, y - 40, 32, 3); ctx.fillStyle = '#FF5A6A'; ctx.fillRect(x - 16, y - 40, Math.round(32 * k), 3);
 }
 /* ---------- HUD ---------- */
-const BIGB = [8, GH - 40, 34, 32];
+const BIGB = [GW - 42, GH - 40, 34, 32];   /* dešinėje apačioje - kairėje juda mama */
 function drawHud() {
   /* viršutinė juosta */
   ctx.fillStyle = 'rgba(14,12,26,.82)'; ctx.fillRect(0, 0, GW, 22); ctx.fillStyle = OUT; ctx.fillRect(0, 22, GW, 1);
@@ -103,7 +103,7 @@ function drawHud() {
   else if (D.tut === 2 && L.t < 7) tip(T('tRed'), 70);
   else if (D.tut === 3 && L.t < 7) tip(T('tBubble'), 70);
   else if (LV % 10 === 0 && LV > 0 && L.t < 5) tip(T('feat')[L.w], 70);
-  if (ready && L.t < 60 && !save.bigSeen) tip(T('tBig'), GH - 64);
+  if (ready && L.t < 60 && !save.bigSeen) tip(touchUI ? T('tBig').replace(/\s*\(E\)/, '') : T('tBig'), GH - 64);
   if (L.boss && L.boss.hp > 0 && L.t < 3) { const s = Math.floor(gt * 6) % 2; text(T('boss'), 240, 100, 3, s ? COL.red : '#FFFFFF', .5); }
   if (L.t < 1.4) { const kk = L.t < .2 ? smooth(L.t / .2) : L.t > 1.1 ? 1 - smooth((L.t - 1.1) / .3) : 1, ww = Math.round(220 * kk), yy = 110;
     ctx.fillStyle = OUT; ctx.fillRect(240 - ww / 2 - 1, yy - 1, ww + 2, 36); ctx.fillStyle = COL.panel; ctx.fillRect(240 - ww / 2, yy, ww, 34); ctx.fillStyle = WORLD[L.w].node; ctx.fillRect(240 - ww / 2, yy, ww, 1); ctx.fillRect(240 - ww / 2, yy + 33, ww, 1);
