@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>BLOB RUSH</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0E0B1A; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  #c { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
+  #rot { display: none; position: fixed; inset: 0; background: #16122A; color: #F4F1FF; font: bold 22px system-ui, sans-serif; text-align: center; align-items: center; justify-content: center; flex-direction: column; gap: 18px; }
+  #rot svg { width: 96px; height: 96px; }
+  @media (orientation: portrait) and (pointer: coarse) { #rot { display: flex; } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<!-- telefonas stačiai: paprašoma pasukti (žaidimas gulsčias) -->
+<div id="rot"><svg viewBox="0 0 24 24" fill="none" stroke="#7BE34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="16" rx="2"/><path d="M3 15a9 9 0 0 0 8 7"/><path d="M8 22l3 0 0-3"/></svg><span id="rotT">ROTATE YOUR PHONE</span></div>
+<!-- Poki SDK (vienintelė išorinė užklausa); neįsikrovus - vietinis pakaitalas core.js Poki -->
+<script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
+<script src="js/core.js?v=1"></script>
+<script src="js/lang.js?v=1"></script>
+<script src="js/art.js?v=1"></script>
+<script src="js/game.js?v=1"></script>
+<script src="js/levels.js?v=1"></script>
+<script src="js/bot.js?v=1"></script>
+<script src="js/screens.js?v=1"></script>
+<script src="js/settings.js?v=1"></script>
+<script src="js/ui.js?v=1"></script>
+</body>
+</html>
